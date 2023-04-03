@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:information/pages/login.dart';
 import 'package:information/pages/mainpage.dart';
+import 'package:information/pages/settings.dart';
 
 void main() => runApp(MOPHApp());
 
@@ -13,6 +14,7 @@ class MOPHApp extends StatelessWidget {
       routes: {
         '/login': (context) => LoginPage(),
         '/main': (context) => MainPage(),
+        '/settings': (context) => SettingsPage(),
       },
     );
   }

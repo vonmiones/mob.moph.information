@@ -15,43 +15,71 @@ class LoginPage extends StatelessWidget {
           ),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextFormField(
-                controller: usernameController,
-                decoration: InputDecoration(
-                  hintText: 'Username',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
+            SizedBox(height: 40.0),
+  
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Image.asset(
+                        'lib/assets/images/logo/moph.png',
+                        height: 150.0,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TextFormField(
+                        controller: usernameController,
+                        decoration: InputDecoration(
+                          hintText: 'Username',
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: TextFormField(
+                        controller: passwordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          hintText: 'Password',
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      child: Text('Login'),
+                      onPressed: () {
+                        // TODO: Implement login functionality
+                        Navigator.pushNamed(context, '/main');
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),
-            Padding(
+            Container(
+              alignment: Alignment.bottomRight,
               padding: const EdgeInsets.all(16.0),
-              child: TextFormField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: 'Password',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                ),
+              child: IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: () {
+                  // TODO: Implement settings functionality
+                  Navigator.pushNamed(context, '/settings');
+                },
               ),
-            ),
-            ElevatedButton(
-              child: Text('Login'),
-              onPressed: () {
-                // TODO: Implement login functionality
-                Navigator.pushNamed(context, '/main');
-              },
             ),
           ],
         ),

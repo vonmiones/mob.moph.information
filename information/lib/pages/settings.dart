@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:information/pages/search.dart';
 
-class MainPage extends StatefulWidget {
+class SettingsPage extends StatefulWidget {
   @override
-  _MainPageState createState() => _MainPageState();
+  _SettingsPageState createState() => _SettingsPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _SettingsPageState extends State<SettingsPage> {
   String _lastName = '';
   String _firstName = '';
   String _middleName = '';
@@ -16,7 +16,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Patient Search'),
+        title: Text('App Settings'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -26,7 +26,7 @@ class _MainPageState extends State<MainPage> {
             children: <Widget>[
               TextField(
                 decoration: InputDecoration(
-                  labelText: 'Last Name',
+                  labelText: 'Host',
                 ),
                 onChanged: (value) {
                   setState(() {
@@ -36,7 +36,7 @@ class _MainPageState extends State<MainPage> {
               ),
               TextField(
                 decoration: InputDecoration(
-                  labelText: 'First Name',
+                  labelText: 'API',
                 ),
                 onChanged: (value) {
                   setState(() {
@@ -44,31 +44,9 @@ class _MainPageState extends State<MainPage> {
                   });
                 },
               ),
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Middle Name',
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _middleName = value;
-                  });
-                },
-              ),
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Purpose',
-                ),
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
-                onChanged: (value) {
-                  setState(() {
-                    _purpose = value;
-                  });
-                },
-              ),
               SizedBox(height: 16.0),
               ElevatedButton(
-                child: Text('Search'),
+                child: Text('Save'),
                 onPressed: _search,
               ),
             ],
