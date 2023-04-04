@@ -52,7 +52,6 @@ class LoginPage extends StatelessWidget {
                       child: TextFormField(
                         controller: usernameController,
                         decoration: new InputDecoration(
-                          focusColor: Color.fromARGB(249, 255, 251, 210),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                                 color: Color.fromARGB(255, 255, 251, 217), width: 1.0),
