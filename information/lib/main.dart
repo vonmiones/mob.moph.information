@@ -16,6 +16,7 @@ class MOPHApp extends StatelessWidget {
         '/main': (context) => MainPage(),
         '/settings': (context) => SettingsPage(),
       },
+      theme: ThemeData.light().copyWith(useMaterial3: true)
     );
   }
 }
