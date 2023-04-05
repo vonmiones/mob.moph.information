@@ -6,6 +6,8 @@ import 'package:information/pages/settings.dart';
 void main() => runApp(MOPHApp());
 
 class MOPHApp extends StatelessWidget {
+  const MOPHApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

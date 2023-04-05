@@ -11,6 +11,7 @@ class _SettingsPageState extends State<SettingsPage> {
   String _firstName = '';
   String _middleName = '';
   String _purpose = '';
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,34 @@ class _SettingsPageState extends State<SettingsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton(
+                  child: isLoading
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const CircularProgressIndicator(
+                                color: Color.fromRGBO(255, 72, 0, 1),
+                                strokeWidth: 2),
+                            const SizedBox(width: 24),
+                            Text("Checking Connection..."),
+                          ],
+                        )
+                      : Text('Check Connection'),
+                  style: ElevatedButton.styleFrom(
+                    //change width and height on your need width = 200 and height = 50
+                    minimumSize: Size(300, 50),
+                  ),
+                  onPressed: isLoading
+                      ? null
+                      : () async {
+                          setState(() => isLoading = true);
+                          await Future.delayed(Duration(seconds: 5));
+                          setState(() => isLoading = false);
+                        },
+                ),
+              ),
               TextField(
                 decoration: InputDecoration(
                   labelText: 'Host',
