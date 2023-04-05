@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:information/pages/search.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:network_info_plus/network_info_plus.dart';
-import 'package:ping_discover_network/ping_discover_network.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -89,7 +88,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     if(isLoading) return;
                     setState(()=>isLoading=true);
                     await Future.delayed(Duration(seconds: 5));
-                    _testPing();
                     setState(()=>isLoading=false);
                   },
                 ),
@@ -138,23 +136,6 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  void _testPing() async {
-    const port = 80;
-    final stream = NetworkAnalyzer.discover2(
-      '192.168.2',
-      port,
-      timeout: Duration(milliseconds: 5000),
-    );
-
-    int found = 0;
-    stream.listen((NetworkAddress addr) {
-      // print('${addr.ip}:$port');
-      if (addr.exists) {
-        found++;
-        print('Found device: ${addr.ip}:$port');
-      }
-    }).onDone(() => print('Finish. Found $found device(s)'));
-  }
   void _checkNetwork() async {
     setState(() => isLoading = true);
     ConnectivityResult connectivityResult =
