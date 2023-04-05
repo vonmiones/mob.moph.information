@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:information/pages/search.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -12,6 +15,13 @@ class _SettingsPageState extends State<SettingsPage> {
   String _middleName = '';
   String _purpose = '';
   bool isLoading = false;
+  List<String> _networkInfo = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _checkNetwork();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 color: Color.fromRGBO(255, 72, 0, 1),
                                 strokeWidth: 2),
                             const SizedBox(width: 24),
-                            Text("Checking Connection..."),
+                            Text("Please wait..."),
                           ],
                         )
                       : Text('Check Connection'),
@@ -44,13 +54,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     //change width and height on your need width = 200 and height = 50
                     minimumSize: Size(300, 50),
                   ),
-                  onPressed: isLoading
-                      ? null
-                      : () async {
-                          setState(() => isLoading = true);
-                          await Future.delayed(Duration(seconds: 5));
-                          setState(() => isLoading = false);
-                        },
+                  onPressed: _checkNetwork,
                 ),
               ),
               TextField(
@@ -76,8 +80,18 @@ class _SettingsPageState extends State<SettingsPage> {
               SizedBox(height: 16.0),
               ElevatedButton(
                 child: Text('Save'),
-                onPressed: _search,
+                onPressed: () => _search(context),
               ),
+              if (_networkInfo.isNotEmpty) ...[
+                SizedBox(height: 16.0),
+                Text(
+                  'Network Information',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8.0),
+                for (var info in _networkInfo)
+                  Text(info),
+              ],
             ],
           ),
         ),
@@ -85,7 +99,49 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  void _search() {
+  void _checkNetwork() async {
+    setState(() => isLoading = true);
+    ConnectivityResult connectivityResult =
+        await Connectivity().checkConnectivity();
+    bool isConnected = connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi;
+    String networkAddress = '';
+    // if (isConnected) {
+    //   networkAddress = await Connectivity().getWifiIP();
+    //   if (networkAddress == null || networkAddress.isEmpty) {
+    //     networkAddress = await Connectivity().getNetworkIP();
+    //   }
+    // }
+    setState(() {
+      isLoading = false;
+      _networkInfo = [        
+        'Connectivity: ${isConnected ? "Connected" : "Disconnected"}',       
+        'Network Address: ${isConnected ? networkAddress ?? "Not Found" : "N/A"}',      ];
+    });
+  }
+
+void _search(BuildContext context) async {
+    // Check network connection
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult != ConnectivityResult.mobile && connectivityResult != ConnectivityResult.wifi) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('No network connection.'),
+          actions: <Widget>[
+            ElevatedButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     // TODO: Implement search functionality
     // For now, let's just assume that the search query was successful
     // and display the search results in a dialog box
