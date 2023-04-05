@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:information/pages/search.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:information/helpers/sqlhelper.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
