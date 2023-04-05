@@ -14,7 +14,7 @@ class _SettingsPageState extends State<SettingsPage> {
   String _firstName = '';
   String _middleName = '';
   String _purpose = '';
-  bool isLoading = false;
+  bool isLoading = true;
   List<String> _networkInfo = [];
 
   @override
@@ -54,7 +54,13 @@ class _SettingsPageState extends State<SettingsPage> {
                     //change width and height on your need width = 200 and height = 50
                     minimumSize: Size(300, 50),
                   ),
-                  onPressed: _checkNetwork,
+                  onPressed: () async{
+                    if(isLoading) return;
+                    setState(()=>isLoading=true);
+                    await Future.delayed(Duration(seconds: 5));
+                    _checkNetwork();
+                    setState(()=>isLoading=false);
+                  },
                 ),
               ),
               TextField(
