@@ -11,7 +11,7 @@ class MOPHApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MOPH Information',
+      title: 'MOPH Asenso App',
       initialRoute: '/login',
       routes: {
         '/login': (context) => LoginPage(),

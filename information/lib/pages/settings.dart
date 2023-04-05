@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:information/pages/search.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:network_info_plus/network_info_plus.dart';
+import 'package:ping_discover_network/ping_discover_network.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -37,7 +39,10 @@ class _SettingsPageState extends State<SettingsPage> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
                   child: isLoading
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -52,7 +57,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       : Text('Check Connection'),
                   style: ElevatedButton.styleFrom(
                     //change width and height on your need width = 200 and height = 50
-                    minimumSize: Size(300, 50),
+                    // minimumSize: Size(300, 50),
                   ),
                   onPressed: () async{
                     if(isLoading) return;
@@ -62,6 +67,34 @@ class _SettingsPageState extends State<SettingsPage> {
                     setState(()=>isLoading=false);
                   },
                 ),
+                const SizedBox(width: 10),
+                    ElevatedButton(
+                  child: isLoading
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const CircularProgressIndicator(
+                                color: Color.fromRGBO(255, 72, 0, 1),
+                                strokeWidth: 2),
+                            const SizedBox(width: 24),
+                            Text("Please wait..."),
+                          ],
+                        )
+                      : Text('Check Host'),
+                  style: ElevatedButton.styleFrom(
+                    //change width and height on your need width = 200 and height = 50
+                    // minimumSize: Size(300, 50),
+                  ),
+                  onPressed: () async{
+                    if(isLoading) return;
+                    setState(()=>isLoading=true);
+                    await Future.delayed(Duration(seconds: 5));
+                    _testPing();
+                    setState(()=>isLoading=false);
+                  },
+                ),
+                  ],
+                )
               ),
               TextField(
                 decoration: InputDecoration(
@@ -105,19 +138,39 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  void _testPing() async {
+    const port = 80;
+    final stream = NetworkAnalyzer.discover2(
+      '192.168.2',
+      port,
+      timeout: Duration(milliseconds: 5000),
+    );
+
+    int found = 0;
+    stream.listen((NetworkAddress addr) {
+      // print('${addr.ip}:$port');
+      if (addr.exists) {
+        found++;
+        print('Found device: ${addr.ip}:$port');
+      }
+    }).onDone(() => print('Finish. Found $found device(s)'));
+  }
   void _checkNetwork() async {
     setState(() => isLoading = true);
     ConnectivityResult connectivityResult =
         await Connectivity().checkConnectivity();
     bool isConnected = connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi;
-    String networkAddress = '';
-    // if (isConnected) {
-    //   networkAddress = await Connectivity().getWifiIP();
-    //   if (networkAddress == null || networkAddress.isEmpty) {
-    //     networkAddress = await Connectivity().getNetworkIP();
-    //   }
-    // }
+    String? networkAddress = '';
+    final info = NetworkInfo();
+    
+    if (isConnected) {
+
+      networkAddress = await info.getWifiIP();
+      if (networkAddress == null || networkAddress.isEmpty) {
+        networkAddress ="Not Connected";
+      }
+    }
     setState(() {
       isLoading = false;
       _networkInfo = [        
