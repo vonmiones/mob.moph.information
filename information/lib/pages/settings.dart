@@ -13,8 +13,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  String _address = "";
-  String _apikey = "";
+  final TextEditingController _address = TextEditingController();
+  final TextEditingController _apikey = TextEditingController();
   bool _hostIsActive = false;
   String _purpose = '';
   bool isLoading = true;
@@ -24,17 +24,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
   // obtain shared preferences
 
-  void _updateAddress(String value) {
-    setState(() {
-      _address = value;
-    });
-  }
-
-  void _updateAPI(String value) {
-    setState(() {
-      _apikey = value;
-    });
-  }
   @override
   void initState() {
     super.initState();
@@ -44,12 +33,12 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   setAppSettings() async {
-    if (_address.trim().isNotEmpty && _apikey.trim().isNotEmpty) {
+    if (_address.text.trim().isNotEmpty && _apikey.text.trim().isNotEmpty) {
       prefs = await SharedPreferences.getInstance();
-      prefs.setString('ipaddress', _address);
-      prefs.setString('api', _apikey);
-      print("SAVING: ------------------------- ${_address} ");
-      print("SAVING: ------------------------- ${_apikey} ");
+      prefs.setString('ipaddress', _address.text);
+      prefs.setString('api', _apikey.text);
+      print("SAVING: ------------------------- ${_address.text} ");
+      print("SAVING: ------------------------- ${_apikey.text} ");
     }
   }
 
@@ -58,10 +47,10 @@ class _SettingsPageState extends State<SettingsPage> {
     final ipAddress = prefs.getString('ipaddress');
     final appAPI = prefs.getString('api');
     if (ipAddress != null && appAPI != null) {
-      _address = ipAddress;
-      _apikey = appAPI;
-      print("IP address loaded from shared preferences:  ${_address} ");
-      print("API KEY loaded from shared preferences:  ${_apikey} ");
+      _address.text = ipAddress;
+      _apikey.text = appAPI;
+      print("IP address loaded from shared preferences:  ${_address.text} ");
+      print("API KEY loaded from shared preferences:  ${_apikey.text} ");
     } else {
       print("No saved IP address found in shared preferences");
     }
@@ -141,18 +130,38 @@ class _SettingsPageState extends State<SettingsPage> {
                     ],
                   )),
               TextField(
-                controller: TextEditingController(text: _address),
+                controller: _address,
                 decoration: InputDecoration(
                   labelText: 'Host',
                 ),
-                onChanged: _updateAddress,
+                onChanged: (value) {
+                  final selection = _address.selection;
+                  final newText = 'prefix$value'; // Add any prefix you want
+                  _address.value = _address.value.copyWith(
+                    text: newText,
+                    selection: selection.copyWith(
+                      baseOffset: selection.extentOffset + 1, // Preserve cursor position
+                      extentOffset: selection.extentOffset + 1,
+                    ),
+                  );
+                },
               ),
               TextField(
-                controller: TextEditingController(text: _apikey),
+                controller: _apikey,
                 decoration: InputDecoration(
                   labelText: 'API',
                 ),
-                onChanged: _updateAPI,
+                onChanged: (value) {
+                  final selection = _apikey.selection;
+                  final newText = 'prefix$value'; // Add any prefix you want
+                  _apikey.value = _apikey.value.copyWith(
+                    text: newText,
+                    selection: selection.copyWith(
+                      baseOffset: selection.extentOffset + 1, // Preserve cursor position
+                      extentOffset: selection.extentOffset + 1,
+                    ),
+                  );
+                },
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
@@ -179,12 +188,12 @@ class _SettingsPageState extends State<SettingsPage> {
 
   void _checkHost() async {
     setState(() => isHostActive = true);
-    final ping = Ping(_address, count: 5);
+    final ping = Ping(_address.text, count: 5);
     print('Running command: ${ping.command}');
 
     // Begin ping process and listen for output
     ping.stream.listen((event) {
-      if (_address.trim() != "") {
+      if (_address.text.trim() != "") {
         try {
           if (event.response!.ip.toString() != null) {
             _hostIsActive = true;
@@ -226,7 +235,7 @@ class _SettingsPageState extends State<SettingsPage> {
       _networkInfo = [
         'Connectivity: ${isConnected ? "Connected" : "Disconnected"}',
         'Network Address: ${isConnected ? networkAddress ?? "Not Found" : "N/A"}',
-        'Application Host Address: ${isConnected ?  _address : "N/A"}',
+        'Application Host Address: ${isConnected ?  _address.text : "N/A"}',
       ];
     });
   }
