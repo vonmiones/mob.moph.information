@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:information/pages/search.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -14,8 +15,23 @@ class _MainPageState extends State<MainPage> {
   String _middleName = '';
   String _purpose = '';
 
+  bool hasValidIP = false;
+
+  void isValidAccount() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final ipAddress = prefs.getString('ipaddress');
+    final appAPI = prefs.getString('api');
+    if(ipAddress != ""){
+      hasValidIP = true;
+    }else{
+      hasValidIP = false;
+      Navigator.pushNamed(context, '/login');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    isValidAccount();
     return Scaffold(
       appBar: AppBar(
         title: Text('Patient Search'),

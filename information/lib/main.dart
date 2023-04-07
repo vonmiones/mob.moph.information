@@ -2,22 +2,64 @@ import 'package:flutter/material.dart';
 import 'package:information/pages/login.dart';
 import 'package:information/pages/mainpage.dart';
 import 'package:information/pages/settings.dart';
+import 'package:information/pages/home.dart';
+import 'package:information/pages/splash.dart';
 
-void main() => runApp(MOPHApp());
+void main() => runApp(const MOPHApp());
+
 class MOPHApp extends StatelessWidget {
-  const MOPHApp({super.key});
+  const MOPHApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'MOPH Asenso App',
-      initialRoute: '/login',
-      routes: {
-        '/login': (context) => LoginPage(),
-        '/main': (context) => MainPage(),
-        '/settings': (context) => SettingsPage(),
+      title: 'MOPH Connect',
+      initialRoute: '/splash',
+      onGenerateRoute: (RouteSettings settings) {
+        WidgetBuilder builder;
+        switch (settings.name) {
+          case '/login':
+            builder = (BuildContext _) => LoginPage();
+            break;
+          case '/main':
+            builder = (BuildContext _) => const MainPage();
+            break;
+          case '/settings':
+            builder = (BuildContext _) => SettingsPage();
+            break;
+          case '/splash':
+            builder = (BuildContext _) => SplashPage();
+            break;
+          default:
+            builder = (BuildContext _) => HomePage();
+        }
+        return PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 500),
+          pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) => builder(context),
+          transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+            final curvedAnimation = CurvedAnimation(
+              parent: animation,
+              // curve: Curves.easeInOut, // Use any curve you like
+              curve: const Cubic(0.42, 0, 0.58, 1), // Use any curve you like
+            );
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(curvedAnimation),
+              child: child,
+            );
+          },
+        );
       },
-      theme: ThemeData.light().copyWith(useMaterial3: true)
+      theme: ThemeData.light().copyWith(useMaterial3: true),
+      home: WillPopScope(
+        onWillPop: () async => false,
+        child: Container(
+          child: HomePage(),
+        ), // Replace with your home page widget
+      ),
     );
   }
 }

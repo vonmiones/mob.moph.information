@@ -35,10 +35,8 @@ class _SettingsPageState extends State<SettingsPage> {
   setAppSettings() async {
     if (_address.text.trim().isNotEmpty && _apikey.text.trim().isNotEmpty) {
       prefs = await SharedPreferences.getInstance();
-      prefs.setString('ipaddress', _address.text);
-      prefs.setString('api', _apikey.text);
-      print("SAVING: ------------------------- ${_address.text} ");
-      print("SAVING: ------------------------- ${_apikey.text} ");
+      prefs.setString('ipaddress', _address.text.trim());
+      prefs.setString('api', _apikey.text.trim());
     }
   }
 
@@ -47,8 +45,8 @@ class _SettingsPageState extends State<SettingsPage> {
     final ipAddress = prefs.getString('ipaddress');
     final appAPI = prefs.getString('api');
     if (ipAddress != null && appAPI != null) {
-      _address.text = ipAddress;
-      _apikey.text = appAPI;
+      _address.text = ipAddress.trim();
+      _apikey.text = appAPI.trim();
       print("IP address loaded from shared preferences:  ${_address.text} ");
       print("API KEY loaded from shared preferences:  ${_apikey.text} ");
     } else {
@@ -134,40 +132,19 @@ class _SettingsPageState extends State<SettingsPage> {
                 decoration: InputDecoration(
                   labelText: 'Host',
                 ),
-                onChanged: (value) {
-                  final selection = _address.selection;
-                  final newText = 'prefix$value'; // Add any prefix you want
-                  _address.value = _address.value.copyWith(
-                    text: newText,
-                    selection: selection.copyWith(
-                      baseOffset: selection.extentOffset + 1, // Preserve cursor position
-                      extentOffset: selection.extentOffset + 1,
-                    ),
-                  );
-                },
               ),
               TextField(
                 controller: _apikey,
                 decoration: InputDecoration(
                   labelText: 'API',
                 ),
-                onChanged: (value) {
-                  final selection = _apikey.selection;
-                  final newText = 'prefix$value'; // Add any prefix you want
-                  _apikey.value = _apikey.value.copyWith(
-                    text: newText,
-                    selection: selection.copyWith(
-                      baseOffset: selection.extentOffset + 1, // Preserve cursor position
-                      extentOffset: selection.extentOffset + 1,
-                    ),
-                  );
-                },
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
                 child: Text('Save'),
                 onPressed: () async {
                   await setAppSettings();
+                  Navigator.pushNamed(context, '/login');
                 },
               ),
               if (_networkInfo.isNotEmpty) ...[
