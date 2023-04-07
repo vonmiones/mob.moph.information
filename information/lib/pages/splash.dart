@@ -14,8 +14,8 @@ class _SplashPageState extends State<SplashPage> {
 
   _loadData() async {
     // Add any asynchronous tasks you want to perform here
-    await Future.delayed(Duration(seconds: 2));
-    Navigator.pushReplacementNamed(context, '/home');
+    await Future.delayed(Duration(seconds: 5));
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   @override

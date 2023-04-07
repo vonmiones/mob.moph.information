@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:information/pages/search.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+class SearchPage extends StatefulWidget {
+  const SearchPage({super.key});
 
   @override
-  _MainPageState createState() => _MainPageState();
+  _SearchPageState createState() => _SearchPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _SearchPageState extends State<SearchPage> {
   String _lastName = '';
   String _firstName = '';
   String _middleName = '';

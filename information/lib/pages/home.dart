@@ -2,22 +2,37 @@ import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
   final List<Category> categories = [    
-    Category('Patient Search', Icons.person_search_rounded,Colors.red),
-    Category('Accomplishment', Icons.access_time,Colors.orange),
-    Category('Service Request', Icons.task,Colors.blue),
-    Category('Tracking', Icons.track_changes,Colors.green),
-    Category('Announcement', Icons.announcement,Colors.blue),
+    Category('Patient Search', Icons.person_search_rounded,Colors.red, "/search"),
+    Category('Accomplishment', Icons.access_time,Colors.orange, "/accomplishments"),
+    Category('Job Request', Icons.handyman,Colors.blue, "/servicerequest"),
+    Category('Tracking', Icons.track_changes,Colors.green, "/tracking"),
+    Category('Announcement', Icons.announcement,Colors.blue, "/announcement"),
     ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('MOPH Connect'),
-        elevation: 0,
-        backgroundColor: Color.fromARGB(255, 232, 55, 6),
-        foregroundColor: Colors.white,
-        automaticallyImplyLeading: false,
+        title: const Text('MOPH Connect'),
+        actions: [
+          Row(
+            children: [
+              // const Spacer(),
+              IconButton(
+                icon: Icon(Icons.logout),
+                onPressed: () {
+                  print("Logout");
+                  Navigator.pushNamed(context, "/login");
+                  // Do something when menu button is pressed
+                },
+              ),
+            ],
+          ),
+        ],
+        //  elevation: 0,
+        // backgroundColor: Color.fromARGB(255, 232, 55, 6),
+        // foregroundColor: Colors.white,
+        automaticallyImplyLeading: false,       
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -25,8 +40,8 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Categories',
-              style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+              'Services',
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
             Expanded(
@@ -37,7 +52,11 @@ class HomePage extends StatelessWidget {
                 mainAxisSpacing: 10,
                 children: categories
                     .map((category) =>
-                        _buildCategoryIcon(category.title, category.icon, category.color, context))
+                        _buildCategoryIcon(
+                          category.title, 
+                          category.icon, 
+                          category.color, 
+                          context, category.page))
                     .toList(),
               ),
             ),
@@ -55,8 +74,13 @@ class HomePage extends StatelessWidget {
     }
   }
 
-  Widget _buildCategoryIcon(String title, IconData icon, Color color, BuildContext context) {
-    return Column(
+  Widget _buildCategoryIcon(String title, IconData icon, Color color, BuildContext context, String page) {
+    return GestureDetector(
+    onTap: () {
+      Navigator.pushNamed(context, page);
+      // Add your onPressed logic here
+    },
+    child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
@@ -66,7 +90,7 @@ class HomePage extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: color,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(35),
               ),
               child: Icon(
                 icon,
@@ -83,7 +107,8 @@ class HomePage extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
       ],
-    );
+    ),
+  );
   }
 }
 
@@ -91,6 +116,7 @@ class Category {
   final String title;
   final IconData icon;
   final Color color;
+  final String page;
 
-  Category(this.title, this.icon, this.color);
+  Category(this.title, this.icon, this.color, this.page);
 }

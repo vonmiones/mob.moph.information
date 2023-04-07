@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:information/pages/login.dart';
-import 'package:information/pages/mainpage.dart';
+import 'package:information/pages/searchpage.dart';
 import 'package:information/pages/settings.dart';
 import 'package:information/pages/home.dart';
 import 'package:information/pages/splash.dart';
@@ -22,8 +22,8 @@ class MOPHApp extends StatelessWidget {
           case '/login':
             builder = (BuildContext _) => LoginPage();
             break;
-          case '/main':
-            builder = (BuildContext _) => const MainPage();
+          case '/search':
+            builder = (BuildContext _) => const SearchPage();
             break;
           case '/settings':
             builder = (BuildContext _) => SettingsPage();
