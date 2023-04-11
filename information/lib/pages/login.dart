@@ -14,11 +14,18 @@ class LoginPage extends StatefulWidget {
 
 
 class _LoginPageState extends State<LoginPage>{
-  
+
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController _address = TextEditingController();
   final TextEditingController _apikey = TextEditingController();
+  final TextEditingController _token = TextEditingController();
+
+@override
+  void initState() {
+    super.initState();
+    getAppSettings();
+}
 
 
   getAppSettings() async {
@@ -37,10 +44,15 @@ class _LoginPageState extends State<LoginPage>{
 
   // Fetch the CSRF token from the API
   Future<String> fetchCsrfToken() async {
-    final response = await http.get(Uri.parse('https://yourserver.com/api/get_csrf_token.php'));
+    final response = await http.get(Uri.parse('http://'+_address.text +'/git/moph.information/api.php?method=request&action=token'));
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
-      return body['csrf_token'];
+      print("TOKEN---------------------------------------\r\n");
+      print("\r\n\r\n");
+      print(body['token']);
+      print("\r\n\r\n");
+      print("TOKEN---------------------------------------\r\n");
+      return body['token'];
     } else {
       throw Exception('Failed to fetch CSRF token');
     }
@@ -50,9 +62,9 @@ class _LoginPageState extends State<LoginPage>{
   Future<void> postFormData() async {
     final csrfToken = await fetchCsrfToken();
     final response = await http.post(
-      Uri.parse('https://yourserver.com/api/post_form_data.php'),
+      Uri.parse('http://'+_address.text +'/git/moph.information/api.php?method=request&action=validate'),
       headers: {'X-CSRF-Token': csrfToken},
-      body: {'field1': 'value1', 'field2': 'value2'},
+      body: {'user': usernameController.text, 'pass': passwordController.text, 'api':_apikey},
     );
     if (response.statusCode == 200) {
       print('Form data submitted successfully');
@@ -152,8 +164,9 @@ class _LoginPageState extends State<LoginPage>{
                           ),
                           
                         onPressed: () {
+                          getAppSettings();
                           // TODO: Implement login functionality
-                          fetchCsrfToken();
+                          postFormData();
                           //Navigator.pushNamed(context, '/main');
                         },
                     )
