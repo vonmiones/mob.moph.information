@@ -1,9 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:network_info_plus/network_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginPage extends StatelessWidget {
+
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+
+class _LoginPageState extends State<LoginPage>{
+  
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController _address = TextEditingController();
+  final TextEditingController _apikey = TextEditingController();
+
+
+  getAppSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    final ipAddress = prefs.getString('ipaddress');
+    final appAPI = prefs.getString('api');
+    if (ipAddress != null && appAPI != null) {
+      _address.text = ipAddress.trim();
+      _apikey.text = appAPI.trim();
+      print("IP address loaded from shared preferences:  ${_address.text} ");
+      print("API KEY loaded from shared preferences:  ${_apikey.text} ");
+    } else {
+      print("No saved IP address found in shared preferences");
+    }
+  }
+
+  // Fetch the CSRF token from the API
+  Future<String> fetchCsrfToken() async {
+    final response = await http.get(Uri.parse('https://yourserver.com/api/get_csrf_token.php'));
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      return body['csrf_token'];
+    } else {
+      throw Exception('Failed to fetch CSRF token');
+    }
+  }
+
+  // Make a POST request with the CSRF token in the headers
+  Future<void> postFormData() async {
+    final csrfToken = await fetchCsrfToken();
+    final response = await http.post(
+      Uri.parse('https://yourserver.com/api/post_form_data.php'),
+      headers: {'X-CSRF-Token': csrfToken},
+      body: {'field1': 'value1', 'field2': 'value2'},
+    );
+    if (response.statusCode == 200) {
+      print('Form data submitted successfully');
+    } else {
+      throw Exception('Failed to submit form data');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +153,8 @@ class LoginPage extends StatelessWidget {
                           
                         onPressed: () {
                           // TODO: Implement login functionality
-                          Navigator.pushNamed(context, '/main');
+                          fetchCsrfToken();
+                          //Navigator.pushNamed(context, '/main');
                         },
                     )
                     ),

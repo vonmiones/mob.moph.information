@@ -39,6 +39,7 @@ dependencies:
   sqflite: ^2.2.6
   dart_ping: ^8.0.1
   shared_preferences: ^2.1.0
+  http: ^0.13.5
   
 dev_dependencies:
   flutter_test:
