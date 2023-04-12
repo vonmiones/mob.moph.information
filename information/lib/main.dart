@@ -55,9 +55,12 @@ class MOPHApp extends StatelessWidget {
       },
       theme: ThemeData.light().copyWith(useMaterial3: true),
       home: WillPopScope(
-        onWillPop: () async => false,
+        onWillPop: () async {
+          // Return false to disable back navigation
+          return false;
+        },
         child: Container(
-          child: HomePage(),
+          child: LoginPage(),
         ), // Replace with your home page widget
       ),
     );

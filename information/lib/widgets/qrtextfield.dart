@@ -39,11 +39,8 @@ class _QRTextFieldState extends State<QRTextField> {
             _decodeJson(barcodeScanRes);
 
             Map<String, dynamic> json = jsonDecode(barcodeScanRes);
-            String user = json['user'];
             String hash = json['hash'];
-
             widget.controller.text = hash;
-
           },
           child: Icon(Icons.qr_code),
         ),

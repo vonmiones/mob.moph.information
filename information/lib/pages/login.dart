@@ -47,14 +47,9 @@ class _LoginPageState extends State<LoginPage>{
 
   // Fetch the CSRF token from the API
   Future<String> fetchCsrfToken() async {
-    final response = await http.get(Uri.parse('http://'+_address.text +'/git/moph.information/api.php?method=request&action=token'));
+    final response = await http.get(Uri.parse('http://'+_address.text +'/git/moph.information/api.php?method=request&action=token&api='+_apikey.text.toString()));
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
-      print("TOKEN---------------------------------------\r\n");
-      print("\r\n\r\n");
-      print(body['token']);
-      print("\r\n\r\n");
-      print("TOKEN---------------------------------------\r\n");
       return body['token'];
     } else {
       throw Exception('Failed to fetch CSRF token');
@@ -74,16 +69,15 @@ class _LoginPageState extends State<LoginPage>{
         'token': csrfToken 
         },
     );
+    final body = jsonDecode(response.body);
+    final status = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      print('Form data submitted successfully');
-      print("\r\n\r\n");
-      print("TOKEN---------------------------------------\r\n");
-      print(csrfToken);
-      print("TOKEN---------------------------------------\r\n");
-      print("RESPONSE---------------------------------------\r\n");
-      print(response.body.toString());
-      print("RESPONSE---------------------------------------\r\n");
-      print("\r\n\r\n");
+      if(status['status'].toString() == "success"){
+        await Future.delayed(Duration(seconds: 3));
+        Navigator.pushNamed(context, '/main');
+      }else{
+        
+      }
     } else {
       throw Exception('Failed to submit form data');
     }
@@ -91,7 +85,12 @@ class _LoginPageState extends State<LoginPage>{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return  WillPopScope(
+      onWillPop: () async {
+        // Return false to disable back navigation
+        return false;
+      },
+      child:Scaffold(
       body: Container(
         decoration: BoxDecoration(
           // gradient: LinearGradient(
@@ -215,6 +214,6 @@ class _LoginPageState extends State<LoginPage>{
           ],
         ),
       ),
-    );
+    ));
   }
 }

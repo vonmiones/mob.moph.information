@@ -11,7 +11,13 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    
+    return WillPopScope(
+      onWillPop: () async {
+        // Return false to disable back navigation
+        return false;
+      },
+      child:Scaffold(
       appBar: AppBar(
         title: const Text('MOPH Connect'),
         actions: [
@@ -63,7 +69,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 
   int _getCrossAxisCount() {
