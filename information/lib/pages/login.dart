@@ -64,7 +64,12 @@ class _LoginPageState extends State<LoginPage>{
     final response = await http.post(
       Uri.parse('http://'+_address.text +'/git/moph.information/api.php?method=request&action=validate'),
       headers: {'X-CSRF-Token': csrfToken},
-      body: {'user': usernameController.text, 'pass': passwordController.text, 'api':_apikey.text },
+      body: {
+        'user': usernameController.text, 
+        'pass': passwordController.text, 
+        'api':_apikey.text,
+        'token': csrfToken 
+        },
     );
     if (response.statusCode == 200) {
       print('Form data submitted successfully');
@@ -73,6 +78,7 @@ class _LoginPageState extends State<LoginPage>{
       print(csrfToken);
       print("TOKEN---------------------------------------\r\n");
       print("RESPONSE---------------------------------------\r\n");
+      print(response.body.toString());
       print("RESPONSE---------------------------------------\r\n");
       print("\r\n\r\n");
     } else {

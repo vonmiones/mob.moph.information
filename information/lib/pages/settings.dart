@@ -137,7 +137,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 controller: _apikey,
                 decoration: InputDecoration(
                   labelText: 'API',
+                  suffixIcon: GestureDetector(
+                    onTap: () {
+                      // Add your code here
+                    },
+                    child: Icon(Icons.qr_code_2_rounded),
+                  ),
                 ),
+                
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
