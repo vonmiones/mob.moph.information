@@ -6,6 +6,7 @@ import 'package:information/pages/search.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:information/widgets/qrtextfield.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -133,18 +134,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   labelText: 'Host',
                 ),
               ),
-              TextField(
-                controller: _apikey,
-                decoration: InputDecoration(
-                  labelText: 'API',
-                  suffixIcon: GestureDetector(
-                    onTap: () {
-                      // Add your code here
-                    },
-                    child: Icon(Icons.qr_code_2_rounded),
-                  ),
-                ),
-                
+              QRTextField(
+                controller: _apikey, 
+                text: "API"               
               ),
               SizedBox(height: 16.0),
               ElevatedButton(

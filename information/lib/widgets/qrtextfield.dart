@@ -3,15 +3,16 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class QRTextField extends StatelessWidget {
   final TextEditingController controller;
+  final String text;
 
-  QRTextField({required this.controller});
+  QRTextField({required this.controller, required this.text});
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
-        labelText: 'Enter text',
+        labelText: text,
         suffixIcon: InkWell(
           onTap: () async {
             String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
