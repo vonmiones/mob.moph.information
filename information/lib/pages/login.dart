@@ -32,9 +32,12 @@ class _LoginPageState extends State<LoginPage>{
     final prefs = await SharedPreferences.getInstance();
     final ipAddress = prefs.getString('ipaddress');
     final appAPI = prefs.getString('api');
+    final username = prefs.getString('user');
+
     if (ipAddress != null && appAPI != null) {
       _address.text = ipAddress.trim();
       _apikey.text = appAPI.trim();
+      usernameController.text = username!.trim();
       print("IP address loaded from shared preferences:  ${_address.text} ");
       print("API KEY loaded from shared preferences:  ${_apikey.text} ");
     } else {

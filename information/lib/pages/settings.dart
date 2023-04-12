@@ -16,6 +16,9 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final TextEditingController _address = TextEditingController();
   final TextEditingController _apikey = TextEditingController();
+  final TextEditingController _user = TextEditingController();
+
+
   bool _hostIsActive = false;
   String _purpose = '';
   bool isLoading = true;
@@ -38,6 +41,7 @@ class _SettingsPageState extends State<SettingsPage> {
       prefs = await SharedPreferences.getInstance();
       prefs.setString('ipaddress', _address.text.trim());
       prefs.setString('api', _apikey.text.trim());
+      prefs.setString('user', _user.text.trim());
     }
   }
 
@@ -136,7 +140,14 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               QRTextField(
                 controller: _apikey, 
-                text: "API"               
+                text: "API",
+                onDecode: (Map<String, dynamic> decodedJson) {
+                  // Do something with the decoded JSON
+                  Map<String, dynamic> json = decodedJson;
+                  String user = json['user'];
+                  _user.text = user;
+                  
+                },
               ),
               SizedBox(height: 16.0),
               ElevatedButton(
