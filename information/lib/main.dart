@@ -23,7 +23,7 @@ class MOPHApp extends StatelessWidget {
             builder = (BuildContext _) => LoginPage();
             break;
           case '/search':
-            builder = (BuildContext _) => const SearchPage();
+            builder = (BuildContext _) => SearchPage();
             break;
           case '/settings':
             builder = (BuildContext _) => SettingsPage();

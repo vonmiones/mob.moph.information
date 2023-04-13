@@ -21,12 +21,19 @@ class _LoginPageState extends State<LoginPage>{
   final TextEditingController _apikey = TextEditingController();
   final TextEditingController _token = TextEditingController();
 
+late SharedPreferences prefs;
 @override
   void initState() {
     super.initState();
     getAppSettings();
 }
 
+setAppSettings() async {
+    if (usernameController.text.trim().isNotEmpty) {
+      prefs = await SharedPreferences.getInstance();
+      prefs.setString('user', usernameController.text.trim());
+    }
+  }
 
   getAppSettings() async {
     final prefs = await SharedPreferences.getInstance();
@@ -65,15 +72,16 @@ class _LoginPageState extends State<LoginPage>{
       body: {
         'user': usernameController.text, 
         'pass': passwordController.text, 
+        'platform':"mobile",
         'api':_apikey.text,
         'token': csrfToken 
         },
     );
+    
     final body = jsonDecode(response.body);
     final status = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      if(status['status'].toString() == "success"){
-        await Future.delayed(Duration(seconds: 3));
+      if(status['response'].toString() == "success"){
         Navigator.pushNamed(context, '/main');
       }else{
         
@@ -179,7 +187,7 @@ class _LoginPageState extends State<LoginPage>{
                           ),
                           
                         onPressed: () {
-                          getAppSettings();
+                          setAppSettings();
                           // TODO: Implement login functionality
                           postFormData();
                           //Navigator.pushNamed(context, '/main');
