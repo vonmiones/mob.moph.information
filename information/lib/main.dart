@@ -4,7 +4,6 @@ import 'package:information/pages/searchpage.dart';
 import 'package:information/pages/settings.dart';
 import 'package:information/pages/home.dart';
 import 'package:information/pages/splash.dart';
-import 'package:information/pages/wards.dart';
 
 void main() => runApp(const MOPHApp());
 
@@ -32,11 +31,9 @@ class MOPHApp extends StatelessWidget {
           case '/splash':
             builder = (BuildContext _) => SplashPage();
             break;
-          case '/wards':
-            builder = (BuildContext _) => WardsPage();
-            break;
           default:
             builder = (BuildContext _) => HomePage();
+            break;
         }
         return PageRouteBuilder(
           transitionDuration: const Duration(milliseconds: 500),
