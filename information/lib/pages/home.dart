@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class HomePage extends StatelessWidget {
   final List<Category> categories = [    
     Category('Patient Search', Icons.person_search_rounded,Colors.red, "/search"),
+    // Category('Wards', Icons.bed,Colors.orange, "/wards"),
     // Category('Accomplishment', Icons.access_time,Colors.orange, "/accomplishments"),
     // Category('Job Request', Icons.handyman,Colors.blue, "/servicerequest"),
     // Category('Tracking', Icons.track_changes,Colors.green, "/tracking"),
@@ -27,7 +28,6 @@ class HomePage extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.logout),
                 onPressed: () {
-                  print("Logout");
                   Navigator.pushNamed(context, "/login");
                   // Do something when menu button is pressed
                 },

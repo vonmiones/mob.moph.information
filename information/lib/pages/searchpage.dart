@@ -12,16 +12,19 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final _formKey = GlobalKey<FormState>();
+  late SharedPreferences prefs;
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _middleNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   String _relationship = '';
+
   TextEditingController _purposeController = TextEditingController();
 
   TextEditingController _username = TextEditingController();
   TextEditingController _address = TextEditingController();
   TextEditingController _apikey = TextEditingController();
   TextEditingController _token = TextEditingController();
+  TextEditingController _searchThreshold = TextEditingController();
 
   List<dynamic> _searchResult = [];
   bool _isLoading = false;
@@ -40,14 +43,28 @@ Map<String, String> relationshipOptions = {
   void initState() {
     super.initState();
     getAppSettings();
+    getSearchQuality();
   }
+  setSearchQuality() async {
+    if (_searchThreshold.text.trim().isNotEmpty) {
+      prefs = await SharedPreferences.getInstance();
+      prefs.setString('threshold', _searchThreshold.text.trim());
+    }
+  }
+  getSearchQuality() async {
+    prefs = await SharedPreferences.getInstance();
+    final _threshold = prefs.getString('threshold');
+    if (_threshold != null) {
+      _searchThreshold.text = _threshold.trim()??'2';
+    }
 
+  }
   getAppSettings() async {
-    final prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     final ipAddress = prefs.getString('ipaddress');
     final appAPI = prefs.getString('api');
     final username = prefs.getString('user');
-
+    
     if (ipAddress != null && appAPI != null) {
       _username.text = username!.trim();
       _address.text = ipAddress.trim();
@@ -77,6 +94,7 @@ Map<String, String> relationshipOptions = {
           'user': _username.text, 
           'platform':"mobile",
           'api':_apikey.text,
+          'threshold':_searchThreshold.text,
         });
 
     setState(() {
@@ -168,13 +186,41 @@ Map<String, String> relationshipOptions = {
                   ],
                 ),
               ),
+              Text("Search Quality"),
+              ToggleSwitch(
+                initialLabelIndex: int.tryParse(_searchThreshold.text) ?? 2,
+                totalSwitches: 3,
+                customWidths: [120.0,120.0,120.0 ],
+                cornerRadius: 20.0,
+                activeBgColors: [[Color.fromARGB(255, 255, 146, 83)], [Colors.redAccent],[Color.fromARGB(255, 243, 60, 27)]],
+                activeFgColor: Colors.white,
+                inactiveBgColor: Colors.grey,
+                inactiveFgColor: Colors.white,
+                labels: ['Sounds Familiar', 'Similar Name', 'Exact Match'],
+                onToggle: (index) {
+                  switch (index) {
+                    case 0:
+                      _searchThreshold.text = '0';
+                      break;
+                    case 1:
+                      _searchThreshold.text = '1';
+                      break;
+                    case 2:
+                      _searchThreshold.text = '2';
+                      break;
+                    default:
+                  }
+                  setSearchQuality();
+                },
+              ),
+              SizedBox(height: 10),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _search();
                   }
                 },
-                child: Text('Search'),
+                child: Text('Search Patient Info'),
               ),
               Expanded(
                 child: _isLoading

@@ -14,3 +14,11 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+## COMPILE VERSIONS
+
+## WINDOWS
+# For windows applicaiton, enable the Developer Opens by executing "ms-settings:developers" in the command prompt
+
+## ANDROID
+# For Android applicaiton, enable the Developer Options on your Android Opens # Use flutter build apk --profile
