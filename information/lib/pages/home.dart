@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 class HomePage extends StatelessWidget {
   final List<Category> categories = [    
     Category('Patient Search', Icons.person_search_rounded,Colors.red, "/search"),
-    Category('Accomplishment', Icons.access_time,Colors.orange, "/accomplishments"),
-    Category('Job Request', Icons.handyman,Colors.blue, "/servicerequest"),
-    Category('Tracking', Icons.track_changes,Colors.green, "/tracking"),
-    Category('Announcement', Icons.announcement,Colors.blue, "/announcement"),
+    // Category('Accomplishment', Icons.access_time,Colors.orange, "/accomplishments"),
+    // Category('Job Request', Icons.handyman,Colors.blue, "/servicerequest"),
+    // Category('Tracking', Icons.track_changes,Colors.green, "/tracking"),
+    // Category('Announcement', Icons.announcement,Colors.blue, "/announcement"),
     ];
 
   @override
