@@ -100,6 +100,26 @@ setAppSettings() async {
       },
       child:Scaffold(
       body: Container(
+        decoration: BoxDecoration(
+          // gradient: LinearGradient(
+          //   // Where the linear gradient begins and ends
+          //   begin: Alignment.topRight,
+          //   end: Alignment.bottomCenter,
+          //   // Add one stop for each color. Stops should increase from 0 to 1
+          //   stops: [0.1, 0.5, 0.9],
+          //   colors: [
+          //     // Colors are easy thanks to Flutter's Colors class.
+          //     Color.fromRGBO(219, 124, 0, 1),
+          //     Color.fromRGBO(240, 68, 0, 1),
+          //     Color.fromRGBO(228, 53, 0, 1),
+          //   ],
+          // ),
+          // color: Color.fromRGBO(179, 104, 75, 1),
+          // image: DecorationImage(
+          //   image: AssetImage('lib/assets/images/bg/bg1.jpg'),
+          //   fit: BoxFit.cover,
+          // ),
+        ),
         child: Column(
           children: [
             SizedBox(height: 100.0),
