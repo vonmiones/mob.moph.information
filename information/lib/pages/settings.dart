@@ -6,6 +6,7 @@ import 'package:information/pages/search.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:information/widgets/qrtextfield.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -15,6 +16,9 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final TextEditingController _address = TextEditingController();
   final TextEditingController _apikey = TextEditingController();
+  final TextEditingController _user = TextEditingController();
+
+
   bool _hostIsActive = false;
   String _purpose = '';
   bool isLoading = true;
@@ -37,6 +41,7 @@ class _SettingsPageState extends State<SettingsPage> {
       prefs = await SharedPreferences.getInstance();
       prefs.setString('ipaddress', _address.text.trim());
       prefs.setString('api', _apikey.text.trim());
+      prefs.setString('user', _user.text.trim());
     }
   }
 
@@ -133,11 +138,16 @@ class _SettingsPageState extends State<SettingsPage> {
                   labelText: 'Host',
                 ),
               ),
-              TextField(
-                controller: _apikey,
-                decoration: InputDecoration(
-                  labelText: 'API',
-                ),
+              QRTextField(
+                controller: _apikey, 
+                text: "API",
+                onDecode: (Map<String, dynamic> decodedJson) {
+                  // Do something with the decoded JSON
+                  Map<String, dynamic> json = decodedJson;
+                  String user = json['user'];
+                  _user.text = user;
+                  
+                },
               ),
               SizedBox(height: 16.0),
               ElevatedButton(

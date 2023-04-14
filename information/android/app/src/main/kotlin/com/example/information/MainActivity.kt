@@ -1,4 +1,4 @@
-package com.example.information
+package com.mi15sys.information
 
 import io.flutter.embedding.android.FlutterActivity
 

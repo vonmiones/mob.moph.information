@@ -3,15 +3,22 @@ import 'package:flutter/material.dart';
 class HomePage extends StatelessWidget {
   final List<Category> categories = [    
     Category('Patient Search', Icons.person_search_rounded,Colors.red, "/search"),
-    Category('Accomplishment', Icons.access_time,Colors.orange, "/accomplishments"),
-    Category('Job Request', Icons.handyman,Colors.blue, "/servicerequest"),
-    Category('Tracking', Icons.track_changes,Colors.green, "/tracking"),
-    Category('Announcement', Icons.announcement,Colors.blue, "/announcement"),
+    // Category('Wards', Icons.bed,Colors.orange, "/wards"),
+    // Category('Accomplishment', Icons.access_time,Colors.orange, "/accomplishments"),
+    // Category('Job Request', Icons.handyman,Colors.blue, "/servicerequest"),
+    // Category('Tracking', Icons.track_changes,Colors.green, "/tracking"),
+    // Category('Announcement', Icons.announcement,Colors.blue, "/announcement"),
     ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    
+    return WillPopScope(
+      onWillPop: () async {
+        // Return false to disable back navigation
+        return false;
+      },
+      child:Scaffold(
       appBar: AppBar(
         title: const Text('MOPH Connect'),
         actions: [
@@ -21,7 +28,6 @@ class HomePage extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.logout),
                 onPressed: () {
-                  print("Logout");
                   Navigator.pushNamed(context, "/login");
                   // Do something when menu button is pressed
                 },
@@ -63,7 +69,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 
   int _getCrossAxisCount() {
