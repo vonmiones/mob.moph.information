@@ -17,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController result = TextEditingController();
   final TextEditingController _address = TextEditingController();
   final TextEditingController _apikey = TextEditingController();
   final TextEditingController _token = TextEditingController();
@@ -101,12 +102,21 @@ setAppSettings() async {
         await Future.delayed(Duration(seconds: 3));
         setState(() {
           _isLoading = false;
+          result.text = "Login Success";        
         });
         Navigator.pushNamed(context, '/main');
       }else{
-        
+        await Future.delayed(Duration(seconds: 3));
+        setState(() {
+          _isLoading = false;
+          result.text = "Login failed";        
+        });
       }
     } else {
+      setState(() {
+        _isLoading = false;
+        result.text = "Login failed";        
+      });
       throw Exception('Failed to submit form data');
     }
   }
@@ -184,6 +194,13 @@ setAppSettings() async {
                       }
                     },
                     child: _isLoading ? CircularProgressIndicator() : Text('Login'),
+                  ),
+                ),
+                TextFormField(
+                  controller:result,
+                  decoration: InputDecoration(
+                    labelText: 'Result',
+                    prefixIcon: Icon(Icons.note),
                   ),
                 ),
               ],
