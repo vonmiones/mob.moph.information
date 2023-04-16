@@ -1,31 +1,40 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:animations/animations.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:network_info_plus/network_info_plus.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
-
-class _LoginPageState extends State<LoginPage>{
-
+class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController _address = TextEditingController();
   final TextEditingController _apikey = TextEditingController();
   final TextEditingController _token = TextEditingController();
+  bool _isLoading = false;
+  late SharedPreferences prefs;
 
-late SharedPreferences prefs;
 @override
   void initState() {
     super.initState();
-    getAppSettings();
+    setState(() {
+      _isLoading = true;
+    });
+    setState(() {
+      getAppSettings();
+    });
+    setState(() {
+      _isLoading = false;
+    });
 }
 
 setAppSettings() async {
@@ -67,6 +76,9 @@ setAppSettings() async {
 
   // Make a POST request with the CSRF token in the headers
   Future<void> postFormData() async {
+    setState(() {
+      _isLoading = true;
+    });
     final csrfToken = await fetchCsrfToken();
     final response = await http.post(
       Uri.parse('http://${_address.text}/api.php?method=request&action=validate'),
@@ -84,6 +96,10 @@ setAppSettings() async {
     final status = jsonDecode(response.body);
     if (response.statusCode == 200) {
       if(status['response'].toString() == "success"){
+        await Future.delayed(Duration(seconds: 3));
+        setState(() {
+          _isLoading = false;
+        });
         Navigator.pushNamed(context, '/main');
       }else{
         
@@ -95,112 +111,97 @@ setAppSettings() async {
 
   @override
   Widget build(BuildContext context) {
-    return  WillPopScope(
+    return WillPopScope(
       onWillPop: () async {
         // Return false to disable back navigation
         return false;
       },
-      child:Scaffold(
-      body: Container(
-        child: Column(
+      child: Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 100.0),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AnimatedPositioned(
-                        duration: Duration(milliseconds: 1000),
-                        top: 10,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Image.asset(
-                            'lib/assets/images/logo/moph.png',
-                            height: 150.0,
-                          ),
-                    )),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: TextFormField(
-                        controller: usernameController,
-                        decoration: new InputDecoration(
-                          filled: true,
-                          fillColor: Color.fromARGB(125, 255, 255, 255),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromRGBO(23, 111, 212, 1), width: 1.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Color.fromRGBO(118, 182, 255, 1), width: 1.0),
-                          ),
-                          hintText: 'Username',
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: TextFormField(
-                        controller: passwordController,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          hintText: 'Password',
-                          filled: true,
-                          fillColor: Color.fromARGB(125, 255, 255, 255),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Color.fromRGBO(23, 111, 212, 1), width: 1.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Color.fromRGBO(118, 182, 255, 1), width: 1.0),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: ElevatedButton(
-                        child: Text('Login'),
-                        style: ElevatedButton.styleFrom(
-                          //change width and height on your need width = 200 and height = 50
-                          minimumSize: Size(300, 50),
-                          ),
-                          
-                        onPressed: () {
-                          setAppSettings();
-                          // TODO: Implement login functionality
-                          postFormData();
-                          //Navigator.pushNamed(context, '/main');
-                        },
-                    )
-                    ),
-                    AnimatedPositioned(
-                        duration: Duration(milliseconds: 1000),
-                        top: 20,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Image.asset(
-                            'lib/assets/images/logo/ASENSO.png',
-                            height: 150.0,
-                          ),
-                    )),
-                  ],
+            Image.asset(
+              'lib/assets/images/logo/ASENSO.png', // Replace with your logo
+              fit: BoxFit.contain,
+              height: 32,
+            ),
+          ],
+        ),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Image.asset(
+                  'lib/assets/images/logo/moph.png', // Replace with your login icon
+                  fit: BoxFit.contain,
+                  height: 120,
                 ),
-              ),
+                SizedBox(height: 20.0),
+                TextFormField(
+                  controller: usernameController,
+                  decoration: InputDecoration(
+                    labelText: 'Username',
+                    prefixIcon: Icon(Icons.person),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter your username';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20.0),
+                TextFormField(
+                  controller:passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    prefixIcon: Icon(Icons.lock),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Please enter your password';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20.0),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        setAppSettings();
+                        postFormData();
+                      }
+                    },
+                    child: _isLoading ? CircularProgressIndicator() : Text('Login'),
+                  ),
+                ),
+              ],
             ),
-            Container(
-              alignment: Alignment.bottomRight,
-              padding: const EdgeInsets.all(16.0),
-              child: IconButton(
-                icon: Icon(Icons.settings),
-                onPressed: () {
-                  // TODO: Implement settings functionality
-                  Navigator.pushNamed(context, '/settings');
-                },
-              ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        surfaceTintColor: Colors.white,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () {
+                Navigator.pushNamed(context, '/settings');
+              },
             ),
+            SizedBox(width: 8.0),
           ],
         ),
       ),
