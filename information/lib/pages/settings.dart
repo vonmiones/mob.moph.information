@@ -145,6 +145,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   // Do something with the decoded JSON
                   Map<String, dynamic> json = decodedJson;
                   String user = json['user'];
+                  _address.text = json['url'];
                   _user.text = user;
                   
                 },

@@ -13,9 +13,9 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final _formKey = GlobalKey<FormState>();
   late SharedPreferences prefs;
-  TextEditingController _firstNameController = TextEditingController();
-  TextEditingController _middleNameController = TextEditingController();
-  TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _middleNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   String _relationship = '';
 
   TextEditingController _purposeController = TextEditingController();
@@ -69,10 +69,10 @@ Map<String, String> relationshipOptions = {
       _username.text = username!.trim();
       _address.text = ipAddress.trim();
       _apikey.text = appAPI.trim();
-      print("IP address loaded from shared preferences:  ${_address.text} ");
-      print("API KEY loaded from shared preferences:  ${_apikey.text} ");
+      // print("IP address loaded from shared preferences:  ${_address.text} ");
+      // print("API KEY loaded from shared preferences:  ${_apikey.text} ");
     } else {
-      print("No saved IP address found in shared preferences");
+      // print("No saved IP address found in shared preferences");
     }
   }
 
@@ -84,7 +84,7 @@ Map<String, String> relationshipOptions = {
     // Make the API call
     var response = await http.post(
         Uri.parse(
-            'http://${_address.text}/git/moph.information/api.php?method=request&action=patientname'),
+            'http://${_address.text}/api.php?method=request&action=patientname'),
         body: {
           'first': _firstNameController.text,
           'mid': _middleNameController.text,
@@ -240,11 +240,22 @@ Map<String, String> relationshipOptions = {
                                           _searchResult[index])));
                             },
                             title: Text(
-                                '${_searchResult[index]['patlast']}, ${_searchResult[index]['patfirst']} ${_searchResult[index]['patmiddle']}'),
+                                '${_searchResult[index]['patlast']}, ${_searchResult[index]['patfirst']} ${_searchResult[index]['patmiddle']}',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                ),
                             subtitle: Text(
                                 'Room: ${_searchResult[index]['room_name']}'),
                             trailing:
-                                Text('${_searchResult[index]['match_rate']} %'),
+                                Text(
+                                  '${_searchResult[index]['match_rate']}% Match',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                  ),
                           );
                         },
                       ),

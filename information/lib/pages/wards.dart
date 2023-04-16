@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,106 +10,202 @@ class WardsPage extends StatefulWidget {
 }
 
 class _WardsPageState extends State<WardsPage> {
-  List<dynamic> _wards = [];
   final TextEditingController _address = TextEditingController();
   final TextEditingController _apikey = TextEditingController();
   final TextEditingController _user = TextEditingController();
   late SharedPreferences prefs;
+  String _totalPatients = "";
+  List _wards = [];
 
 
-  Future<void> _fetchData() async {
-    final response = await http.get(Uri.parse('http://${_address.text}/git/moph.information/api.php?method=request&action=wards&api=${_apikey.text}'));
-    if (response.statusCode == 200) {
-      setState(() {
-        _wards = jsonDecode(response.body)['wards'];
-      });
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchData();
-    getAppSettings();
-  }
-
-
-  getAppSettings() async {
+  getAppSettingsAndFetchData() async {
     final prefs = await SharedPreferences.getInstance();
     final ipAddress = prefs.getString('ipaddress');
     final appAPI = prefs.getString('api');
     if (ipAddress != null && appAPI != null) {
       _address.text = ipAddress.trim();
       _apikey.text = appAPI.trim();
+      _fetchData();
     }
   }
 
 
+  @override
+  void initState() {
+    super.initState();
+    getAppSettingsAndFetchData();
+    // _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    await Future.delayed(Duration(seconds: 2));
+    final response =
+        await http.get(Uri.parse('http://${_address.text}/api.php?method=request&action=wards&api=${_apikey.text}'));
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _wards = json.decode(response.body)['wards'];
+        _totalPatients = json.decode(response.body)['patient_count'].toString();
+      });
+    } else {
+      throw Exception('Failed to fetch data');
+    }
+  }
+
+
+Future<void> _fetchPatients(String ward) async {
+    final response = await http.post(
+      Uri.parse('http://${_address.text}/api.php?method=request&action=patperwards'),
+      body: {
+        'wardcode': ward, 
+        'platform':"mobile",
+        'api':_apikey.text,
+        },
+    );
+    
+    final body = jsonDecode(response.body);
+    final status = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      if(status['status'].toString() == "success"){
+        print("RESULT ================= ${body}");
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => PatientListPage(body['data'])));
+      }else{
+        print("FAILED ================= ${body}");
+      }
+    } else {
+      throw Exception('Failed to submit form data');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Rooms'),
+        title: Row(children: [
+          Text('Total Patients: ${_totalPatients}'),
+        ]),
       ),
       body: _wards.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: _wards.length,
-              itemBuilder: (BuildContext context, int index) {
-                final roomName = _wards[index].values.first['name'];
-                final patientCount = _wards[index].values.first['patient_count'];
-                final patientList = _wards[index].values.first['patient_list'];
-
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => PatientListPage(patientList)));
-                  },
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : GridView.count(
+              crossAxisCount: 3,
+              children: _wards.map((wardData) {
+                return Expanded(
                   child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(roomName, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                          SizedBox(height: 8),
-                          Text('Number of patients: $patientCount', style: TextStyle(fontSize: 18)),
-                        ],
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    margin: EdgeInsets.all(5),
+                    child: InkWell(
+                      onTap: () {
+                        print("REQUESTING PATIENT DATA ====================== ${wardData['ward']}");
+                        _fetchPatients(wardData['ward']);
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Center(child:Text(
+                              wardData['ward_name'],
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: wardData['ward_name'].toString().length > 10 ?
+                                25 - ((wardData['ward_name'].toString().length)-12) : 25,
+                              ),
+                            )),  
+                            Center(
+                              child:
+                              Text(
+                              wardData['count'].toString(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 50,
+                                fontWeight: FontWeight.bold
+                              ),
+                            ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 );
-              },
+              }).toList(),
             ),
     );
   }
 }
 
-class PatientListPage extends StatelessWidget {
+
+class PatientListPage extends StatefulWidget {
   final List<dynamic> _patients;
 
   PatientListPage(this._patients);
 
   @override
+  _PatientListPageState createState() => _PatientListPageState();
+}
+
+class _PatientListPageState extends State<PatientListPage> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Patient List'),
+        title: Row(children: [
+          Text('Total Patients: ${widget._patients.length}'),
+        ]),
       ),
-      body: ListView.builder(
-        itemCount: _patients.length,
-        itemBuilder: (BuildContext context, int index) {
-          final patient = _patients[index];
-          final patientName = '${patient['patlast']}, ${patient['patfirst']} ${patient['patmiddle']}';
+      body: widget._patients.isEmpty
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          :ListView(
+          children: widget._patients.map((patientData){ 
+            return Card(
+                margin: EdgeInsets.fromLTRB(20, 0, 20, 5),
+                child:Padding(
+                padding: EdgeInsets.all(10.0),
+                child:ListTile(
+                onTap: () {
+                  // Navigate to patient details page
+                },
+                title: Text(
+                  '${patientData['patlast']}, ${patientData['patfirst']} ${patientData['patmiddle']}',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                Text(
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Color.fromRGBO(208, 101, 0, 1)
+                  ),
+                  'Dated Admitted:\r\n${patientData['admdate']} ',
+                ),
+              ],),
+              trailing: Text(
+                '${patientData['patage']} y/o',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold
+                ),
+              ),
+            )));
+          }).toList(),
+        ),
 
-          return ListTile(
-            title: Text(patientName),
-            subtitle: Text(patient['initial_dx']),
-          );
-        },
-      ),
     );
   }
 }

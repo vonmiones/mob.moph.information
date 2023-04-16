@@ -54,7 +54,9 @@ setAppSettings() async {
 
   // Fetch the CSRF token from the API
   Future<String> fetchCsrfToken() async {
-    final response = await http.get(Uri.parse('http://'+_address.text +'/git/moph.information/api.php?method=request&action=token&api='+_apikey.text.toString()));
+    final String url = 'http://${_address.text}/api.php?method=request&action=token&api='+_apikey.text.toString();
+    print("accessing url ================= ${url}");
+    final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
       return body['token'];
@@ -67,7 +69,7 @@ setAppSettings() async {
   Future<void> postFormData() async {
     final csrfToken = await fetchCsrfToken();
     final response = await http.post(
-      Uri.parse('http://'+_address.text +'/git/moph.information/api.php?method=request&action=validate'),
+      Uri.parse('http://${_address.text}/api.php?method=request&action=validate'),
       headers: {'X-CSRF-Token': csrfToken},
       body: {
         'user': usernameController.text, 
