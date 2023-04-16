@@ -41,6 +41,8 @@ setAppSettings() async {
     if (usernameController.text.trim().isNotEmpty) {
       prefs = await SharedPreferences.getInstance();
       prefs.setString('user', usernameController.text.trim());
+      prefs.setString('user', _address.text.trim());
+      prefs.setString('user', _address.text.trim());
     }
   }
 
@@ -178,7 +180,6 @@ setAppSettings() async {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        setAppSettings();
                         postFormData();
                       }
                     },
