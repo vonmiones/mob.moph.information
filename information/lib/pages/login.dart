@@ -98,7 +98,7 @@ setAppSettings() async {
     final body = jsonDecode(response.body);
     final status = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      if(status['response'].toString() == "success"){
+      if(status['data']['status'].toString() == "success"){
         await Future.delayed(Duration(seconds: 3));
         setState(() {
           _isLoading = false;
@@ -194,13 +194,6 @@ setAppSettings() async {
                       }
                     },
                     child: _isLoading ? CircularProgressIndicator() : Text('Login'),
-                  ),
-                ),
-                TextFormField(
-                  controller:result,
-                  decoration: InputDecoration(
-                    labelText: 'Result',
-                    prefixIcon: Icon(Icons.note),
                   ),
                 ),
               ],
