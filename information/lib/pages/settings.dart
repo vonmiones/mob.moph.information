@@ -175,16 +175,25 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _checkHost() async {
+    if(_networkInfo.length > 3){
+      _networkInfo.removeRange(3,_networkInfo.length);
+    }  
     setState(() => isHostActive = true);
-    final ping = Ping(_address.text, count: 5);
+    String ip = _address.text.contains('/')? _address.text.split('/')[0].trim() : _address.text;
+    final ping = Ping(ip, count: 5);
     print('Running command: ${ping.command}');
 
     // Begin ping process and listen for output
     ping.stream.listen((event) {
+      if(event.response.toString() != "null" && event.response.toString() != null){
+        _networkInfo.add("ping "+ event.response.toString().replaceAll(RegExp('PingResponse|\\(|\\)'), ''));
+      }
       if (_address.text.trim() != "") {
         try {
           if (event.response!.ip.toString() != null) {
             _hostIsActive = true;
+            setState(() {
+            });
           }
         } catch (e) {
           true;
