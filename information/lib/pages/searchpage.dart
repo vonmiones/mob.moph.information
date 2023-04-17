@@ -25,7 +25,8 @@ class _SearchPageState extends State<SearchPage> {
   TextEditingController _apikey = TextEditingController();
   TextEditingController _token = TextEditingController();
   TextEditingController _searchThreshold = TextEditingController();
-
+  
+  List<String> debugResult = [];
   List<dynamic> _searchResult = [];
   bool _isLoading = false;
 
@@ -80,7 +81,9 @@ Map<String, String> relationshipOptions = {
     setState(() {
       _isLoading = true;
     });
-
+    setState(() {
+        //debugResult.add("URL: http://${_address.text}/api.php?method=request&action=patientname");
+        });
     // Make the API call
     var response = await http.post(
         Uri.parse(
@@ -96,13 +99,16 @@ Map<String, String> relationshipOptions = {
           'api':_apikey.text,
           'threshold':_searchThreshold.text,
         });
+    setState(() {
+        //debugResult.add("RESPONSE: ${response.body.toString()}");
+    });
 
     setState(() {
       _isLoading = false;
     });
 
     // Decode the response JSON
-    var jsonResponse = json.decode(response.body);
+    var jsonResponse = json.decode(response.body.toString());
 
     // Check if the API call was successful
     if (jsonResponse['status'] == 'success') {
@@ -113,6 +119,10 @@ Map<String, String> relationshipOptions = {
       setState(() {
         _searchResult = [];
       });
+      setState(() {
+        //debugResult.add("ERROR: ${jsonResponse['message']}");
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Error: ${jsonResponse['message']}'),
           duration: const Duration(seconds: 3)));
@@ -190,13 +200,13 @@ Map<String, String> relationshipOptions = {
               ToggleSwitch(
                 initialLabelIndex: int.tryParse(_searchThreshold.text) ?? 2,
                 totalSwitches: 3,
-                customWidths: [120.0,120.0,120.0 ],
+                customWidths: [100.0,100.0,100.0 ],
                 cornerRadius: 20.0,
                 activeBgColors: [[Color.fromARGB(255, 255, 146, 83)], [Colors.redAccent],[Color.fromARGB(255, 243, 60, 27)]],
                 activeFgColor: Colors.white,
                 inactiveBgColor: Colors.grey,
                 inactiveFgColor: Colors.white,
-                labels: ['Sounds Familiar', 'Similar Name', 'Exact Match'],
+                labels: ['Familiar', 'Similar', 'Exact'],
                 onToggle: (index) {
                   switch (index) {
                     case 0:
@@ -222,6 +232,7 @@ Map<String, String> relationshipOptions = {
                 },
                 child: Text('Search Patient Info'),
               ),
+              //for (var info in debugResult) Text(info),
               Expanded(
                 child: _isLoading
                     ? Center(

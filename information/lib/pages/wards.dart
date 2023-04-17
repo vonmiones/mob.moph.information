@@ -15,6 +15,7 @@ class _WardsPageState extends State<WardsPage> {
   final TextEditingController _user = TextEditingController();
   late SharedPreferences prefs;
   String _totalPatients = "";
+  List<String> debugResult = [];
   List _wards = [];
 
 
@@ -40,15 +41,22 @@ class _WardsPageState extends State<WardsPage> {
 
   Future<void> _fetchData() async {
     await Future.delayed(Duration(seconds: 2));
-    final response =
-        await http.get(Uri.parse('http://${_address.text}/api.php?method=request&action=wards&api=${_apikey.text}'));
-
+    final response = await http.get(Uri.parse('http://${_address.text}/api.php?method=request&action=wards&api=${_apikey.text}'));
+    setState(() {
+    //    debugResult.add("Fetching Data: http://${_address.text}/api.php?method=request&action=wards&api=${_apikey.text}");
+      });
     if (response.statusCode == 200) {
       setState(() {
         _wards = json.decode(response.body)['wards'];
         _totalPatients = json.decode(response.body)['patient_count'].toString();
+        setState(() {
+          debugResult.add("Status: Success, ${_totalPatients}");
+        });
       });
     } else {
+      setState(() {
+          debugResult.add("Status: Failed");
+        });
       throw Exception('Failed to fetch data');
     }
   }
@@ -64,16 +72,30 @@ Future<void> _fetchPatients(String ward) async {
         },
     );
     
+    setState(() {
+      debugResult.add("Fetching data from http://${_address.text}/api.php?method=request&action=patperwards");
+    });
+
     final body = jsonDecode(response.body);
     final status = jsonDecode(response.body);
     if (response.statusCode == 200) {
       if(status['status'].toString() == "success"){
-        print("RESULT ================= ${body}");
+        //print("RESULT ================= ${body}");
+        setState(() {
+          //debugResult.add("Status: Success");
+        });
+
         Navigator.of(context).push(MaterialPageRoute(builder: (context) => PatientListPage(body['data'])));
       }else{
-        print("FAILED ================= ${body}");
+        setState(() {
+        //debugResult.add("Status: Failed, ${body}");
+        });
+        //print("FAILED ================= ${body}");
       }
     } else {
+      setState(() {
+      //  debugResult.add("Status: Failed");
+        });
       throw Exception('Failed to submit form data');
     }
   }
@@ -82,8 +104,9 @@ Future<void> _fetchPatients(String ward) async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(children: [
+        title: Column(children: [
           Text('Total Patients: ${_totalPatients}'),
+          for (var info in debugResult) Text(info)
         ]),
       ),
       body: _wards.isEmpty
@@ -102,7 +125,7 @@ Future<void> _fetchPatients(String ward) async {
                     margin: EdgeInsets.all(5),
                     child: InkWell(
                       onTap: () {
-                        print("REQUESTING PATIENT DATA ====================== ${wardData['ward']}");
+                        //print("REQUESTING PATIENT DATA ====================== ${wardData['ward']}");
                         _fetchPatients(wardData['ward']);
                       },
                       child: Padding(
@@ -117,7 +140,7 @@ Future<void> _fetchPatients(String ward) async {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: wardData['ward_name'].toString().length > 10 ?
-                                25 - ((wardData['ward_name'].toString().length)-12) : 25,
+                                15 - ((wardData['ward_name'].toString().length)-12) : 15,
                               ),
                             )),  
                             Center(
@@ -126,7 +149,7 @@ Future<void> _fetchPatients(String ward) async {
                               wardData['count'].toString(),
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 50,
+                                fontSize: 30,
                                 fontWeight: FontWeight.bold
                               ),
                             ),
@@ -196,7 +219,7 @@ class _PatientListPageState extends State<PatientListPage> {
                 ),
               ],),
               trailing: Text(
-                '${patientData['patage']} y/o',
+                '',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold
