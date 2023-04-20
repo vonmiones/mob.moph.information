@@ -93,7 +93,7 @@ Map<String, String> relationshipOptions = {
           'mid': _middleNameController.text,
           'last': _lastNameController.text,
           'purpose': _purposeController.text,
-          'relationship': _relationship,
+          'relationship': "Family",
           'user': _username.text, 
           'platform':"mobile",
           'api':_apikey.text,
@@ -145,52 +145,71 @@ Map<String, String> relationshipOptions = {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextField(
+                      controller: _lastNameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Last Name',
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 10
+                        ),
+                      ),
+                    ),
+                    TextField(
                       controller: _firstNameController,
                       decoration: const InputDecoration(
                         labelText: 'First Name',
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 10
+                        ),
                       ),
                     ),
                     TextField(
                       controller: _middleNameController,
                       decoration: const InputDecoration(
                         labelText: 'Middle Name',
-                      ),
-                    ),
-                    TextField(
-                      controller: _lastNameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Last Name',
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    DropdownButtonFormField<String>(
-                      value: dropdownValue,
-                      decoration: InputDecoration(
-                        labelText: 'Relationship to Patient',
                         labelStyle: TextStyle(
                           color: Colors.black,
+                          fontSize: 10
                         ),
-                        border: OutlineInputBorder(),
                       ),
-                      items: relationshipOptions.keys.map((String key) {
-                        return DropdownMenuItem<String>(
-                          value: relationshipOptions[key],
-                          child: Text(key),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          dropdownValue = value!;
-                          _relationship = value;
-                        });
-                      },
-                      validator: (value) => value == null ? 'Relationship is required' : null,
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 5),
+                    // DropdownButtonFormField<String>(
+                    //   value: dropdownValue,
+                    //   decoration: InputDecoration(
+                    //     labelText: 'Relationship to Patient',
+                    //     labelStyle: TextStyle(
+                    //       color: Colors.black,
+                    //       fontSize: 10
+                    //     ),
+                    //     border: OutlineInputBorder(),
+                    //   ),
+                    //   items: relationshipOptions.keys.map((String key) {
+                    //     return DropdownMenuItem<String>(
+                    //       value: relationshipOptions[key],
+                    //       child: Text(key,style: TextStyle(
+                    //         fontSize: 10
+                    //       ),),
+                    //     );
+                    //   }).toList(),
+                    //   onChanged: (value) {
+                    //     setState(() {
+                    //       dropdownValue = value!;
+                    //       _relationship = value;
+                    //     });
+                    //   },
+                    //   validator: (value) => value == null ? 'Relationship is required' : null,
+                    // ),
+                    SizedBox(height: 5),
                     TextField(
                       controller: _purposeController,
                       decoration: InputDecoration(
                         labelText: 'Purpose of Search',
+                        labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 10
+                        ),
                       ),
                     ),
                   ],
@@ -201,7 +220,7 @@ Map<String, String> relationshipOptions = {
                 initialLabelIndex: int.tryParse(_searchThreshold.text) ?? 2,
                 totalSwitches: 3,
                 customWidths: [100.0,100.0,100.0 ],
-                cornerRadius: 20.0,
+                cornerRadius: 10.0,
                 activeBgColors: [[Color.fromARGB(255, 255, 146, 83)], [Colors.redAccent],[Color.fromARGB(255, 243, 60, 27)]],
                 activeFgColor: Colors.white,
                 inactiveBgColor: Colors.grey,
@@ -223,7 +242,7 @@ Map<String, String> relationshipOptions = {
                   setSearchQuality();
                 },
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 5),
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
@@ -253,17 +272,23 @@ Map<String, String> relationshipOptions = {
                             title: Text(
                                 '${_searchResult[index]['patlast']}, ${_searchResult[index]['patfirst']} ${_searchResult[index]['patmiddle']}',
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 13,
                                   fontWeight: FontWeight.bold
                                 ),
                                 ),
                             subtitle: Text(
-                                'Room: ${_searchResult[index]['room_name']}'),
+                                ' ROOM: [ ${_searchResult[index]['room_name']} ]',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  backgroundColor: Color.fromRGBO(231, 61, 9, 1)
+                                )),
                             trailing:
                                 Text(
                                   '${_searchResult[index]['match_rate']}% Match',
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.bold
                                 ),
                                   ),
@@ -296,27 +321,27 @@ class PatientDetailsPage extends StatelessWidget {
             children: [
               Text(
                 'Name: ${patient['patfirst']} ${patient['patmiddle']} ${patient['patlast']}',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 2),
               Text(
                 'HPER Code: ${patient['hpercode']}',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 12),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 2),
               Text(
                 'Age: ${patient['age']}',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 12),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 2),
               Text(
                 'Address: ${patient['spaddr']}',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 12),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 2),
               Text(
                 'Purpose of Visit: ${patient['purpose']}',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 12),
               ),
             ],
           ),

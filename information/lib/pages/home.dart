@@ -47,7 +47,7 @@ class HomePage extends StatelessWidget {
           children: [
             Text(
               'Services',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
             Expanded(
@@ -96,7 +96,7 @@ class HomePage extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: color,
-                borderRadius: BorderRadius.circular(35),
+                borderRadius: BorderRadius.circular(20),
               ),
               child: Icon(
                 icon,
@@ -109,7 +109,7 @@ class HomePage extends StatelessWidget {
         SizedBox(height: 8),
         Text(
           title,
-          style: TextStyle(fontSize: 24),
+          style: TextStyle(fontSize:18),
           textAlign: TextAlign.center,
         ),
       ],

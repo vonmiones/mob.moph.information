@@ -106,7 +106,7 @@ Future<void> _fetchPatients(String ward) async {
       appBar: AppBar(
         title: Column(children: [
           Text('Total Patients: ${_totalPatients}'),
-          for (var info in debugResult) Text(info)
+          // for (var info in debugResult) Text(info)
         ]),
       ),
       body: _wards.isEmpty
@@ -202,7 +202,7 @@ class _PatientListPageState extends State<PatientListPage> {
                 title: Text(
                   '${patientData['patlast']}, ${patientData['patfirst']} ${patientData['patmiddle']}',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold
                   ),
                 ),
@@ -212,7 +212,7 @@ class _PatientListPageState extends State<PatientListPage> {
                 Text(
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 12,
                     color: Color.fromRGBO(208, 101, 0, 1)
                   ),
                   'Dated Admitted:\r\n${patientData['admdate']} ',
