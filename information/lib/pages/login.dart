@@ -68,25 +68,26 @@ setAppSettings() async {
   // Fetch the CSRF token from the API
   Future<String> fetchCsrfToken() async {
     setState(() {
-      //debugResult.add("Requesting token");
+      debugResult.add("Requesting token");
     });
     final String url = 'http://${_address.text}/api.php?method=request&action=token&api='+_apikey.text.toString();
     setState(() {
-      //debugResult.add("Accessing url ${url}");
+      debugResult.add("Accessing url ${url}");
     });
     final response = await http.get(Uri.parse(url));
+
     setState(() {
-      //debugResult.add("Generating token Result ${response}");
+      debugResult.add("Generating token Result ==> ${response.toString()} <==");
     });
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
       setState(() {
-        //debugResult.add("\r\n\r\nTOKEN: ${body['token']}\r\n\r\n");
+        debugResult.add("\r\n\r\nTOKEN: ${body['token']}\r\n\r\n");
       });
       return body['token'];
     } else {
       setState(() {
-        //debugResult.add("There was an error generating the token");
+        debugResult.add("There was an error generating the token");
       });
       throw Exception('Failed to fetch CSRF token');
     }
@@ -96,11 +97,11 @@ setAppSettings() async {
   Future<void> postFormData() async {
     setState(() {
       _isLoading = true;
-      //debugResult.add("Validating login info ${usernameController.text}:${passwordController.text}");
+      debugResult.add("Validating login info ${usernameController.text}:${passwordController.text}");
     });
     final csrfToken = await fetchCsrfToken();
     setState(() {
-      //debugResult.add("Requesting token ${csrfToken}");
+      debugResult.add("Requesting token ${csrfToken}");
     });
     final response = await http.post(
       Uri.parse('http://${_address.text}/api.php?method=request&action=validate'),
@@ -117,14 +118,14 @@ setAppSettings() async {
     final body = jsonDecode(response.body);
     final status = jsonDecode(response.body);
     setState(() {
-      //debugResult.add("Reading server result ${body}");
+      debugResult.add("Reading server result ${body}");
     });
     if (response.statusCode == 200) {
       if(status['data']['status'].toString() == "success"){
         await Future.delayed(Duration(seconds: 3));
         setState(() {
           _isLoading = false;
-          //debugResult.add("Success ${body}");
+          debugResult.add("Success ${body}");
           result.text = "Login Success";        
         });
         Navigator.pushNamed(context, '/main');
@@ -132,14 +133,14 @@ setAppSettings() async {
         await Future.delayed(Duration(seconds: 3));
         setState(() {
           _isLoading = false;
-          //debugResult.add("Failed ${body}");
+          debugResult.add("Failed ${body}");
           result.text = "Login failed";        
         });
       }
     } else {
       setState(() {
         _isLoading = false;
-          //debugResult.add("Failed ${body}");
+          debugResult.add("Failed ${body}");
         result.text = "Login failed";        
       });
       throw Exception('Failed to submit form data');
@@ -224,7 +225,7 @@ setAppSettings() async {
                     child: _isLoading ? CircularProgressIndicator() : Text('Login'),
                   ),
                 ),
-                //for (var info in debugResult) Text(info)
+                for (var info in debugResult) Text(info)
               ],
             ),
           ),
